@@ -4,7 +4,6 @@ services:
     build: .
     ports:
       - "8000:8000"
-      - "8080:8080"
     volumes:
       - ./Makefile:/usr/local/openresty/nginx/Makefile
       - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
