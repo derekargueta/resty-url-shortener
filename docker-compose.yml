@@ -8,3 +8,9 @@ services:
       - ./Makefile:/usr/local/openresty/nginx/Makefile
       - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./src:/usr/local/openresty/nginx/src
+  #   depends_on:
+  #     - "redis"
+  # redis:
+  #   image: redis
+  #   ports:
+  #       - "6379"
