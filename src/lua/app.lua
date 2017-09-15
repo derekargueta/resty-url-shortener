@@ -55,6 +55,8 @@ function hash_url(url)
     ngx.say("Failed to save URL hash: ", err)
     return
   end
+
+  ngx.say("<a href=\"/" .. first_six .. "\">visit</a>")
 end
 
 ------- Main logic

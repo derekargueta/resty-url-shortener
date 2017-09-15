@@ -2,11 +2,14 @@ version: '3'
 services:
   app:
     build: .
+    container_name: daspio_nginx
     ports:
       - "8000:8000"
     volumes:
+      # this tedious individual mounting is required to not overrite other misc Nginx files
       - ./Makefile:/usr/local/openresty/nginx/Makefile
       - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./src:/usr/local/openresty/nginx/src
   redis:
     image: "redis:alpine"
+    container_name: daspio_redis
