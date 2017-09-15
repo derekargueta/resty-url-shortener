@@ -1,6 +1,15 @@
 
 local args = ngx.req.get_uri_args()
 
+
+function string.starts(String, Start)
+  return string.sub(String, 1, string.len(Start)) == Start
+end
+
+function url_has_scheme(url)
+  return string.starts(url, "http://") or string.starts(url, "https://")
+end
+
 function create_md5()
   local resty_md5 = require "resty.md5"
   local md5 = resty_md5:new()
@@ -27,6 +36,8 @@ function get_redis_conn()
 end
 
 function hash_url(url)
+  local md5 = create_md5()
+  local red = get_redis_conn()
   local ok = md5:update(url)
   if not ok then
     ngx.say("failed to add data")
@@ -37,7 +48,7 @@ function hash_url(url)
   local digest = str.to_hex(md5:final())
 
   local first_six = string.sub(digest, 0, 6)
-  ngx.say("md5: ", first_six)
+  ngx.say("md5 for " .. url .. ": ", first_six)
 
   ok, err = red:set(first_six, url)
   if not ok then
@@ -46,34 +57,12 @@ function hash_url(url)
   end
 end
 
-function lookup_url(url, redis)
-  local res, err = redis:get(url)
-  if not res then
-    ngx.say("failed to get URL: ", err)
-    return
-  end
-
-  return res
-end
-
 ------- Main logic
-local red = get_redis_conn()
-local md5 = create_md5()
 local url_arg = args["url"]
 if url_arg then
+  if not url_has_scheme(url_arg) then
+    url_arg = "http://" .. url_arg
+  end
   hash_url(url_arg)
 end
 
-
-local get = args["get"]
-if get then
-
-  local url = lookup_url(get, red)
-  if url == ngx.null then
-    ngx.say("Couldn't find URL for hash " .. get)
-  else
-    ngx.say('Found ' .. url .. ' for hash ' .. get)
-  end
-end
-
-ngx.say('<p>Hello, world!</p>')
