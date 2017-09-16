@@ -10,6 +10,7 @@ services:
       - ./Makefile:/usr/local/openresty/nginx/Makefile
       - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./src:/usr/local/openresty/nginx/src
+      - ./html:/usr/local/openresty/nginx/html
   redis:
     image: "redis:alpine"
     container_name: daspio_redis
